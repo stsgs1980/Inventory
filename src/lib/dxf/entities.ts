@@ -146,7 +146,7 @@ export function drawOpening(
     const endAngleDeg = startAngleDeg + 90
 
     dxf.addArc(opSx, opSy, widthMm, startAngleDeg, endAngleDeg, LAYER_GOL)
-    dxf.addLine(opSx, opSy, opEx, opSy, LAYER_GOL)
+    dxf.addLine(opSx, opSy, opEx, opEy, LAYER_GOL)
   } else {
     // Window: two parallel lines across the wall opening
     for (const t of [-halfThickness * 0.3, halfThickness * 0.3]) {

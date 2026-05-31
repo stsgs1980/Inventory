@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { calculateArea } from '@/lib/dxf/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Trash2, Plus, ChevronDown, ChevronUp, Edit2 } from 'lucide-react'
+import { Trash2, Plus, ChevronDown, ChevronUp, Edit2, ArrowUp, ArrowDown } from 'lucide-react'
 import { OpeningForm } from './opening-form'
 import { WallForm } from './wall-form'
 import { useToast } from '@/hooks/use-toast'
@@ -36,8 +36,16 @@ export function WallList({ walls, roomId, onRefresh }: WallListProps) {
   const { toast } = useToast()
   const [openingFormWallId, setOpeningFormWallId] = useState<string | null>(null)
   const [openingFormWallIndex, setOpeningFormWallIndex] = useState(0)
+  const [openingFormWallLength, setOpeningFormWallLength] = useState(0)
   const [expandedWallId, setExpandedWallId] = useState<string | null>(null)
   const [editWallData, setEditWallData] = useState<WallData | null>(null)
+  const [editOpeningData, setEditOpeningData] = useState<{
+    id: string
+    openingType: string
+    offset: number
+    width: number
+    height: number
+  } | null>(null)
 
   const area = calculateArea(walls)
 
@@ -61,9 +69,53 @@ export function WallList({ walls, roomId, onRefresh }: WallListProps) {
     }
   }
 
-  function handleAddOpening(wallId: string, wallIndex: number) {
+  function handleAddOpening(wallId: string, wallIndex: number, wallLength: number) {
     setOpeningFormWallId(wallId)
     setOpeningFormWallIndex(wallIndex)
+    setOpeningFormWallLength(wallLength)
+    setEditOpeningData(null)
+  }
+
+  function handleEditOpening(opening: {
+    id: string
+    openingType: string
+    offset: number
+    width: number
+    height: number
+  }, wallId: string, wallIndex: number, wallLength: number) {
+    setOpeningFormWallId(wallId)
+    setOpeningFormWallIndex(wallIndex)
+    setOpeningFormWallLength(wallLength)
+    setEditOpeningData(opening)
+  }
+
+  async function handleMoveWall(wallId: string, direction: 'up' | 'down') {
+    const wallIndex = walls.findIndex(w => w.id === wallId)
+    if (wallIndex < 0) return
+    if (direction === 'up' && wallIndex === 0) return
+    if (direction === 'down' && wallIndex === walls.length - 1) return
+
+    const swapIndex = direction === 'up' ? wallIndex - 1 : wallIndex + 1
+    const wall1 = walls[wallIndex]
+    const wall2 = walls[swapIndex]
+
+    try {
+      // Swap orderIndex values
+      await fetch(`/api/walls/${wall1.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderIndex: wall2.orderIndex }),
+      })
+      await fetch(`/api/walls/${wall2.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderIndex: wall1.orderIndex }),
+      })
+      onRefresh()
+      toast({ title: 'Ordine actualizata' })
+    } catch (error) {
+      console.error('Error reordering wall:', error)
+    }
   }
 
   return (
@@ -144,23 +196,33 @@ export function WallList({ walls, roomId, onRefresh }: WallListProps) {
                         de la {opening.offset}m
                       </span>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-7 w-7 text-red-400 hover:text-red-600"
-                      onClick={() => handleDeleteOpening(opening.id)}
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-blue-400 hover:text-blue-600"
+                        onClick={() => handleEditOpening(opening, wall.id, index, wall.length)}
+                      >
+                        <Edit2 className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-red-400 hover:text-red-600"
+                        onClick={() => handleDeleteOpening(opening.id)}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   <Button
                     variant="outline"
                     size="sm"
                     className="text-xs min-h-[36px]"
-                    onClick={() => handleAddOpening(wall.id, index)}
+                    onClick={() => handleAddOpening(wall.id, index, wall.length)}
                   >
                     <Plus className="w-3 h-3 mr-1" />
                     Adauga deschidere
@@ -173,6 +235,27 @@ export function WallList({ walls, roomId, onRefresh }: WallListProps) {
                   >
                     <Edit2 className="w-3 h-3 mr-1" />
                     Editeaza
+                  </Button>
+                  {/* Reorder buttons */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs min-h-[36px]"
+                    disabled={index === 0}
+                    onClick={() => handleMoveWall(wall.id, 'up')}
+                  >
+                    <ArrowUp className="w-3 h-3 mr-1" />
+                    Sus
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs min-h-[36px]"
+                    disabled={index === walls.length - 1}
+                    onClick={() => handleMoveWall(wall.id, 'down')}
+                  >
+                    <ArrowDown className="w-3 h-3 mr-1" />
+                    Jos
                   </Button>
                   <Button
                     variant="ghost"
@@ -190,15 +273,20 @@ export function WallList({ walls, roomId, onRefresh }: WallListProps) {
         )
       })}
 
-      {/* Opening form dialog */}
+      {/* Opening form dialog (add or edit) */}
       {openingFormWallId && (
         <OpeningForm
           open={!!openingFormWallId}
           onOpenChange={(open) => {
-            if (!open) setOpeningFormWallId(null)
+            if (!open) {
+              setOpeningFormWallId(null)
+              setEditOpeningData(null)
+            }
           }}
           wallId={openingFormWallId}
           wallIndex={openingFormWallIndex}
+          wallLength={openingFormWallLength}
+          editOpening={editOpeningData}
           onSubmit={onRefresh}
         />
       )}
