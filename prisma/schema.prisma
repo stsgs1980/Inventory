@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Building {
+  id              String   @id @default(cuid())
+  letter          String   @default("")
+  permitNumber    String   @default("")
+  permitDate      String   @default("")
+  floorType       String   @default("Parter")
+  floorNumber     Int      @default(1)
+  interiorHeight  Float    @default(2.70)
+  exteriorHeight  Float    @default(3.00)
+  notes           String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  rooms           Room[]
+}
+
+model Room {
+  id             String   @id @default(cuid())
+  number         Int
+  name           String   @default("Antreu")
+  purpose        String   @default("Auxiliara")
+  interiorHeight Float    @default(2.70)
+  buildingId     String
+  orderIndex     Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  building       Building @relation(fields: [buildingId], references: [id], onDelete: Cascade)
+  walls          Wall[]
+}
+
+model Wall {
+  id         String   @id @default(cuid())
+  direction  String   @default("N")
+  length     Float    @default(0)
+  thickness  Float    @default(400)
+  wallType   String   @default("portant")
+  orderIndex Int      @default(0)
+  roomId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  openings   Opening[]
+}
+
+model Opening {
+  id          String   @id @default(cuid())
+  openingType String   @default("door")
+  wallIndex   Int      @default(0)
+  offset      Float    @default(0)
+  width       Float    @default(0.9)
+  height      Float    @default(2.1)
+  wallId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  wall        Wall     @relation(fields: [wallId], references: [id], onDelete: Cascade)
+}
