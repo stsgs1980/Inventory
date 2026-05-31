@@ -13,7 +13,7 @@ from models.data_models import (
     Building, Room, WallSegment, WallType, RoomName,
     RoomPurpose, FloorType, Opening, OpeningType,
 )
-from services.dxf_generator import DXFGenerator
+from services.dxf import DXFGenerator
 
 
 def create_sample_building() -> Building:

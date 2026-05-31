@@ -1,0 +1,43 @@
+[project]
+name = "inventory-bot"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+
+# Anti-monolith: max file length check
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "T20",  # flake8-print (warn about print statements)
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "E501",    # line too long (handled by formatter)
+    "N806",    # non-lowercase variable in function (DXF naming convention)
+    "RUF001",  # ambiguous unicode in strings (Cyrillic UI text is intentional)
+    "RUF002",  # ambiguous unicode in docstrings
+    "RUF003",  # ambiguous unicode in comments
+    "T201",    # print statements (allowed in test scripts and main.py)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["models", "handlers", "services", "storage", "config", "keyboards"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# Anti-monolith: max file length 250 lines for Python (200 for JS/React)
+# Checked via: ruff check --select C901 --max-complexity 10
+# Plus manual review: find . -name "*.py" -exec wc -l {} +
+# Hard limit: 300 lines per file (must split if exceeded)

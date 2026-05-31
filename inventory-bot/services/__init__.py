@@ -1,4 +1,4 @@
 """Services package."""
-from .dxf_generator import DXFGenerator
+from .dxf.generator import DXFGenerator
 
 __all__ = ["DXFGenerator"]
