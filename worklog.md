@@ -55,3 +55,35 @@ Stage Summary:
 - Wall reordering available (move up/down buttons)
 - DXF export verified working with doors, windows, walls, room outlines
 - Test DXF file saved at /home/z/my-project/download/test_building.dxf
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Anti-monolith refactoring of all inventory components
+
+Work Log:
+- Conducted full audit of all source files for anti-monolith violations
+- Identified 6 CRITICAL violations: floor-plan.tsx (1032 lines, 13 useState), building-form.tsx (347, 6 fetch), wall-list.tsx (342, 6 useState), opening-form.tsx (263, 6 useState), export-panel.tsx (254), wall-form.tsx (194, 5 useState)
+- Identified cross-cutting issues: duplicated BuildingData type in 4 files, duplicated fetch in 5 components, no barrel exports
+- Created shared types: src/types/inventory.ts (BuildingData, RoomData, WallData, OpeningData, EditorMode)
+- Created shared hooks: useBuildingData (eliminates 5 duplicate fetch calls), useFloorPlan (extracts 13 useState from floor-plan), useWallMutations (extracts wall reorder logic)
+- Created utility files: src/lib/plan-utils.ts (coordinate math), src/lib/opening-presets.ts (door/window presets)
+- Split floor-plan.tsx (1032 lines) into 6 files: floor-plan.tsx (119), floor-plan-toolbar.tsx (90), floor-plan-grid.tsx (71), floor-plan-room.tsx (49), floor-plan-wall.tsx (124), floor-plan-draw-preview.tsx (101)
+- Extracted building-selector.tsx from building-form.tsx
+- Extracted wall-item.tsx from wall-list.tsx
+- Converted opening-form.tsx, wall-form.tsx, room-form.tsx from multiple useState to useReducer
+- Refactored export-panel.tsx into BuildingInfoCard, StatsCard, AreasCard components
+- Refactored header.tsx and room-list.tsx to use useBuildingData shared hook
+- Added barrel exports: index.ts for inventory/, hooks/, types/
+- Verified TypeScript compilation: 0 errors in src/
+- Verified Next.js build: successful
+- Verified API endpoints and DXF export: all working
+
+Stage Summary:
+- All inventory component files now under 200 lines (was: max 1032)
+- useState count per component reduced from 13 max to 4 max (floor-plan: 13->0 via useFloorPlan hook)
+- Duplicated BuildingData type consolidated into single shared types/inventory.ts
+- Duplicated building fetch consolidated into useBuildingData hook (5 components -> 1 hook)
+- Form components converted to useReducer (opening-form, wall-form, room-form)
+- Barrel exports added for all component/hook/type directories
+- DXF export verified working after refactoring (9397 bytes, valid AC1021 format)
