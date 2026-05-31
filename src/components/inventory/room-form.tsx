@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
+import { useToast } from '@/hooks/use-toast'
 
 interface RoomFormProps {
   open: boolean
@@ -27,10 +28,12 @@ interface RoomFormProps {
     purpose: string
     interiorHeight: number
   } | null
+  nextRoomNumber?: number
 }
 
-export function RoomForm({ open, onOpenChange, buildingId, onSubmit, editRoom }: RoomFormProps) {
-  const [number, setNumber] = useState(editRoom?.number ?? 1)
+export function RoomForm({ open, onOpenChange, buildingId, onSubmit, editRoom, nextRoomNumber }: RoomFormProps) {
+  const { toast } = useToast()
+  const [number, setNumber] = useState(editRoom?.number ?? nextRoomNumber ?? 1)
   const [name, setName] = useState(editRoom?.name ?? 'Antreu')
   const [purpose, setPurpose] = useState(editRoom?.purpose ?? 'Auxiliara')
   const [interiorHeight, setInteriorHeight] = useState(editRoom?.interiorHeight ?? 2.70)
@@ -39,7 +42,7 @@ export function RoomForm({ open, onOpenChange, buildingId, onSubmit, editRoom }:
   // Reset form when dialog opens or editRoom changes
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
-      setNumber(editRoom?.number ?? 1)
+      setNumber(editRoom?.number ?? nextRoomNumber ?? 1)
       setName(editRoom?.name ?? 'Antreu')
       setPurpose(editRoom?.purpose ?? 'Auxiliara')
       setInteriorHeight(editRoom?.interiorHeight ?? 2.70)
@@ -72,8 +75,13 @@ export function RoomForm({ open, onOpenChange, buildingId, onSubmit, editRoom }:
       }
       onSubmit()
       onOpenChange(false)
+      toast({
+        title: editRoom ? 'Camera actualizata' : 'Camera adaugata',
+        description: `#${number} ${name}`,
+      })
     } catch (error) {
       console.error('Error saving room:', error)
+      toast({ title: 'Eroare', description: 'Nu s-a putut salva camera', variant: 'destructive' })
     } finally {
       setSaving(false)
     }

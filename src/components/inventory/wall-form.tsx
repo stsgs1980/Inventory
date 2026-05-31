@@ -14,6 +14,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
+import { useToast } from '@/hooks/use-toast'
 
 interface WallFormProps {
   open: boolean
@@ -21,22 +22,31 @@ interface WallFormProps {
   roomId: string
   orderIndex: number
   onSubmit: () => void
+  editWall?: {
+    id: string
+    direction: string
+    length: number
+    thickness: number
+    wallType: string
+    orderIndex: number
+  } | null
 }
 
-export function WallForm({ open, onOpenChange, roomId, orderIndex, onSubmit }: WallFormProps) {
-  const [direction, setDirection] = useState('N')
-  const [length, setLength] = useState(0)
-  const [thickness, setThickness] = useState(DEFAULT_THICKNESS_PORTANT)
-  const [wallType, setWallType] = useState('portant')
+export function WallForm({ open, onOpenChange, roomId, orderIndex, onSubmit, editWall }: WallFormProps) {
+  const { toast } = useToast()
+  const [direction, setDirection] = useState(editWall?.direction ?? 'N')
+  const [length, setLength] = useState(editWall?.length ?? 0)
+  const [thickness, setThickness] = useState(editWall?.thickness ?? DEFAULT_THICKNESS_PORTANT)
+  const [wallType, setWallType] = useState(editWall?.wallType ?? 'portant')
   const [saving, setSaving] = useState(false)
 
   // Reset when opening
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
-      setDirection('N')
-      setLength(0)
-      setThickness(DEFAULT_THICKNESS_PORTANT)
-      setWallType('portant')
+      setDirection(editWall?.direction ?? 'N')
+      setLength(editWall?.length ?? 0)
+      setThickness(editWall?.thickness ?? DEFAULT_THICKNESS_PORTANT)
+      setWallType(editWall?.wallType ?? 'portant')
     }
     onOpenChange(isOpen)
   }
@@ -55,22 +65,40 @@ export function WallForm({ open, onOpenChange, roomId, orderIndex, onSubmit }: W
     if (length <= 0 || thickness <= 0) return
     setSaving(true)
     try {
-      await fetch('/api/walls', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          roomId,
-          direction,
-          length,
-          thickness,
-          wallType,
-          orderIndex,
-        }),
-      })
+      if (editWall) {
+        await fetch(`/api/walls/${editWall.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            direction,
+            length,
+            thickness,
+            wallType,
+          }),
+        })
+      } else {
+        await fetch('/api/walls', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            roomId,
+            direction,
+            length,
+            thickness,
+            wallType,
+            orderIndex,
+          }),
+        })
+      }
       onSubmit()
       onOpenChange(false)
+      toast({
+        title: editWall ? 'Perete actualizat' : 'Perete adaugat',
+        description: `${direction} ${length}m x ${thickness}mm (${wallType === 'portant' ? 'Portant' : 'Despartitor'})`,
+      })
     } catch (error) {
       console.error('Error saving wall:', error)
+      toast({ title: 'Eroare', description: 'Nu s-a putut salva peretele', variant: 'destructive' })
     } finally {
       setSaving(false)
     }
@@ -80,7 +108,7 @@ export function WallForm({ open, onOpenChange, roomId, orderIndex, onSubmit }: W
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Adauga perete</DialogTitle>
+          <DialogTitle>{editWall ? 'Editeaza perete' : 'Adauga perete'}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
           {/* Compass direction selector */}
@@ -156,7 +184,7 @@ export function WallForm({ open, onOpenChange, roomId, orderIndex, onSubmit }: W
             disabled={saving || length <= 0 || thickness <= 0}
             className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
           >
-            {saving ? 'Se salveaza...' : 'Adauga'}
+            {saving ? 'Se salveaza...' : editWall ? 'Salveaza' : 'Adauga'}
           </Button>
         </DialogFooter>
       </DialogContent>

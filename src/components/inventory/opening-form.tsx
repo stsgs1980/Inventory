@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
+import { useToast } from '@/hooks/use-toast'
 
 interface OpeningFormProps {
   open: boolean
@@ -23,6 +24,7 @@ interface OpeningFormProps {
 }
 
 export function OpeningForm({ open, onOpenChange, wallId, wallIndex, onSubmit }: OpeningFormProps) {
+  const { toast } = useToast()
   const [openingType, setOpeningType] = useState('door')
   const [offset, setOffset] = useState(0)
   const [width, setWidth] = useState(0.9)
@@ -70,8 +72,13 @@ export function OpeningForm({ open, onOpenChange, wallId, wallIndex, onSubmit }:
       })
       onSubmit()
       onOpenChange(false)
+      toast({
+        title: 'Deschidere adaugata',
+        description: `${openingType === 'door' ? 'Usa' : 'Fereastra'} ${width}m x ${height}m`,
+      })
     } catch (error) {
       console.error('Error saving opening:', error)
+      toast({ title: 'Eroare', description: 'Nu s-a putut salva deschiderea', variant: 'destructive' })
     } finally {
       setSaving(false)
     }

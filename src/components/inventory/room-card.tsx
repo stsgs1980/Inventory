@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { calculateArea } from '@/lib/dxf/utils'
+import { calculateArea, buildRoomPolygon } from '@/lib/dxf/utils'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -37,16 +37,22 @@ interface RoomCardProps {
   }
   onRefresh: () => void
   onDelete: (id: string) => void
+  defaultExpanded?: boolean
 }
 
-export function RoomCard({ buildingId, room, onRefresh, onDelete }: RoomCardProps) {
-  const [expanded, setExpanded] = useState(false)
+export function RoomCard({ buildingId, room, onRefresh, onDelete, defaultExpanded = false }: RoomCardProps) {
+  const [expanded, setExpanded] = useState(defaultExpanded)
   const [wallFormOpen, setWallFormOpen] = useState(false)
   const [editFormOpen, setEditFormOpen] = useState(false)
 
   const area = calculateArea(room.walls)
   const wallCount = room.walls.length
   const openingCount = room.walls.reduce((sum, w) => sum + w.openings.length, 0)
+
+  // Check if polygon is closed (last point returns near origin)
+  const polygon = buildRoomPolygon(room.walls)
+  const lastPoint = polygon.length > 1 ? polygon[polygon.length - 1] : null
+  const isClosed = lastPoint !== null && Math.abs(lastPoint[0]) < 0.01 && Math.abs(lastPoint[1]) < 0.01
 
   return (
     <>
@@ -84,6 +90,11 @@ export function RoomCard({ buildingId, room, onRefresh, onDelete }: RoomCardProp
                 <div className="text-xs text-gray-400">
                   {wallCount}p / {openingCount}g
                 </div>
+                {wallCount >= 3 && (
+                  <div className={`text-xs font-medium ${isClosed ? 'text-emerald-600' : 'text-amber-500'}`}>
+                    {isClosed ? 'Inchis' : 'Deschis'}
+                  </div>
+                )}
               </div>
               {expanded ? (
                 <ChevronUp className="w-5 h-5 text-gray-400" />

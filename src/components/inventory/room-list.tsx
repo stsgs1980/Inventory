@@ -36,7 +36,7 @@ interface BuildingData {
   rooms: RoomData[]
 }
 
-export function RoomList() {
+export function RoomList({ autoExpand = false }: { autoExpand?: boolean }) {
   const { currentBuildingId } = useInventoryStore()
   const [building, setBuilding] = useState<BuildingData | null>(null)
   const [roomFormOpen, setRoomFormOpen] = useState(false)
@@ -95,6 +95,7 @@ export function RoomList() {
           room={room}
           onRefresh={refresh}
           onDelete={handleDeleteRoom}
+          defaultExpanded={autoExpand}
         />
       ))}
 
@@ -122,6 +123,7 @@ export function RoomList() {
           open={roomFormOpen}
           onOpenChange={setRoomFormOpen}
           buildingId={currentBuildingId}
+          nextRoomNumber={(building?.rooms.length ?? 0) + 1}
           onSubmit={refresh}
         />
       )}

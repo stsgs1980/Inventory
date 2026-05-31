@@ -16,9 +16,9 @@ export default function Home() {
       case 1:
         return <BuildingForm />
       case 2:
-        return <RoomList />
+        return <RoomList autoExpand={false} />
       case 3:
-        return <RoomList /> // Step 3 shares room list with wall editing inside cards
+        return <RoomList autoExpand={true} />
       case 4:
         return <FloorPlan />
       case 5:

@@ -4,8 +4,10 @@ import { useState } from 'react'
 import { calculateArea } from '@/lib/dxf/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react'
+import { Trash2, Plus, ChevronDown, ChevronUp, Edit2 } from 'lucide-react'
 import { OpeningForm } from './opening-form'
+import { WallForm } from './wall-form'
+import { useToast } from '@/hooks/use-toast'
 
 interface WallData {
   id: string
@@ -31,9 +33,11 @@ interface WallListProps {
 }
 
 export function WallList({ walls, roomId, onRefresh }: WallListProps) {
+  const { toast } = useToast()
   const [openingFormWallId, setOpeningFormWallId] = useState<string | null>(null)
   const [openingFormWallIndex, setOpeningFormWallIndex] = useState(0)
   const [expandedWallId, setExpandedWallId] = useState<string | null>(null)
+  const [editWallData, setEditWallData] = useState<WallData | null>(null)
 
   const area = calculateArea(walls)
 
@@ -41,6 +45,7 @@ export function WallList({ walls, roomId, onRefresh }: WallListProps) {
     try {
       await fetch(`/api/walls/${wallId}`, { method: 'DELETE' })
       onRefresh()
+      toast({ title: 'Perete sters' })
     } catch (error) {
       console.error('Error deleting wall:', error)
     }
@@ -50,6 +55,7 @@ export function WallList({ walls, roomId, onRefresh }: WallListProps) {
     try {
       await fetch(`/api/openings/${openingId}`, { method: 'DELETE' })
       onRefresh()
+      toast({ title: 'Deschidere stearsa' })
     } catch (error) {
       console.error('Error deleting opening:', error)
     }
@@ -160,13 +166,22 @@ export function WallList({ walls, roomId, onRefresh }: WallListProps) {
                     Adauga deschidere
                   </Button>
                   <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-xs min-h-[36px]"
+                    onClick={() => setEditWallData(wall)}
+                  >
+                    <Edit2 className="w-3 h-3 mr-1" />
+                    Editeaza
+                  </Button>
+                  <Button
                     variant="ghost"
                     size="sm"
                     className="text-xs text-red-500 hover:text-red-700 min-h-[36px]"
                     onClick={() => handleDeleteWall(wall.id)}
                   >
                     <Trash2 className="w-3 h-3 mr-1" />
-                    Sterge perete
+                    Sterge
                   </Button>
                 </div>
               </div>
@@ -184,6 +199,18 @@ export function WallList({ walls, roomId, onRefresh }: WallListProps) {
           }}
           wallId={openingFormWallId}
           wallIndex={openingFormWallIndex}
+          onSubmit={onRefresh}
+        />
+      )}
+
+      {/* Edit wall form dialog */}
+      {editWallData && (
+        <WallForm
+          open={!!editWallData}
+          onOpenChange={(open) => { if (!open) setEditWallData(null) }}
+          roomId={roomId}
+          orderIndex={editWallData.orderIndex}
+          editWall={editWallData}
           onSubmit={onRefresh}
         />
       )}

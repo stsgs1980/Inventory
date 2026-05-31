@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Save, Plus, Trash2 } from 'lucide-react'
+import { useToast } from '@/hooks/use-toast'
 
 interface BuildingData {
   id?: string
@@ -25,6 +26,7 @@ interface BuildingData {
 
 export function BuildingForm() {
   const { currentBuildingId, setBuilding } = useInventoryStore()
+  const { toast } = useToast()
   const [buildings, setBuildings] = useState<BuildingData[]>([])
   const [form, setForm] = useState<BuildingData>({
     letter: '',
@@ -129,8 +131,13 @@ export function BuildingForm() {
         }
       }
       await reloadBuildings()
+      toast({
+        title: currentBuildingId ? 'Cladire actualizata' : 'Cladire creata',
+        description: `Lit. ${form.letter || '-'} ${form.floorType}`,
+      })
     } catch (error) {
       console.error('Error saving building:', error)
+      toast({ title: 'Eroare', description: 'Nu s-a putut salva cladirea', variant: 'destructive' })
     } finally {
       setSaving(false)
     }
@@ -159,6 +166,7 @@ export function BuildingForm() {
         handleNew()
       }
       await reloadBuildings()
+      toast({ title: 'Cladire stearsa' })
     } catch (error) {
       console.error('Error deleting building:', error)
     }

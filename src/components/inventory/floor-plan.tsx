@@ -128,6 +128,8 @@ export function FloorPlan() {
   }
 
   // Calculate overall bounding box
+  // Flip Y axis: in architecture Y goes UP, in SVG Y goes DOWN
+  // We use a negative Y scale transform and recalculate the viewBox
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
 
   for (let i = 0; i < building.rooms.length; i++) {
@@ -137,7 +139,8 @@ export function FloorPlan() {
 
     for (const point of polygonM) {
       const px = pos.x + point[0] * M_TO_MM
-      const py = pos.y + point[1] * M_TO_MM
+      // Flip Y: negate the Y coordinate for SVG display
+      const py = -(pos.y + point[1] * M_TO_MM)
       minX = Math.min(minX, px)
       minY = Math.min(minY, py)
       maxX = Math.max(maxX, px)
@@ -154,6 +157,9 @@ export function FloorPlan() {
 
   const viewBoxWidth = maxX - minX
   const viewBoxHeight = maxY - minY
+
+  // Helper to flip Y for display
+  const flipY = (x: number, y: number): [number, number] => [x, -y]
 
   return (
     <div className="relative w-full h-full min-h-[400px]">
@@ -209,11 +215,11 @@ export function FloorPlan() {
 
             if (polygonM.length < 2) return null
 
-            // Convert to mm coordinates with origin offset
-            const polygonMm = polygonM.map(p => [
-              pos.x + p[0] * M_TO_MM,
-              pos.y + p[1] * M_TO_MM,
-            ] as [number, number])
+            // Convert to mm coordinates with origin offset, Y-flipped for SVG
+            const polygonMm = polygonM.map(p => {
+              const [fx, fy] = flipY(pos.x + p[0] * M_TO_MM, pos.y + p[1] * M_TO_MM)
+              return [fx, fy] as [number, number]
+            })
 
             const area = calculateArea(room.walls)
             const [cx, cy] = polygonCenter(polygonMm)
@@ -261,17 +267,21 @@ export function FloorPlan() {
 
                   return (
                     <g key={wallIdx}>
-                      {lines.map((line, li) => (
-                        <line
-                          key={li}
-                          x1={line.x1}
-                          y1={line.y1}
-                          x2={line.x2}
-                          y2={line.y2}
-                          stroke={wallColor}
-                          strokeWidth={2}
-                        />
-                      ))}
+                      {lines.map((line, li) => {
+                        const [x1f, y1f] = flipY(line.x1, line.y1)
+                        const [x2f, y2f] = flipY(line.x2, line.y2)
+                        return (
+                          <line
+                            key={li}
+                            x1={x1f}
+                            y1={y1f}
+                            x2={x2f}
+                            y2={y2f}
+                            stroke={wallColor}
+                            strokeWidth={2}
+                          />
+                        )
+                      })}
 
                       {/* Openings */}
                       {wall.openings.map((opening, oi) => {
@@ -289,16 +299,19 @@ export function FloorPlan() {
                         const opEy = start[1] + uyy * (offsetMm + widthMm)
 
                         if (opening.openingType === 'door') {
-                          // Door: arc path
+                          // Door: arc path (flip Y)
                           const radius = widthMm
+                          const [osx, osy] = flipY(opSx, opSy)
+                          const [oex, oey] = flipY(opEx, opEy)
+                          const [arcEndX, arcEndY] = flipY(opSx + nxx * radius, opSy + nyy * radius)
                           return (
                             <g key={oi}>
                               <line
-                                x1={opSx} y1={opSy} x2={opEx} y2={opSy}
+                                x1={osx} y1={osy} x2={oex} y2={osy}
                                 stroke="#d946ef" strokeWidth={2}
                               />
                               <path
-                                d={`M ${opSx} ${opSy} A ${radius} ${radius} 0 0 1 ${opSx + nxx * radius} ${opSy + nyy * radius}`}
+                                d={`M ${osx} ${osy} A ${radius} ${radius} 0 0 0 ${arcEndX} ${arcEndY}`}
                                 fill="none"
                                 stroke="#d946ef"
                                 strokeWidth={1.5}
@@ -307,18 +320,22 @@ export function FloorPlan() {
                             </g>
                           )
                         } else {
-                          // Window: two parallel lines
+                          // Window: two parallel lines (flip Y)
                           const halfT = wall.thickness / 2.0
+                          const [w1x1, w1y1] = flipY(opSx + nxx * halfT * 0.3, opSy + nyy * halfT * 0.3)
+                          const [w1x2, w1y2] = flipY(opEx + nxx * halfT * 0.3, opEy + nyy * halfT * 0.3)
+                          const [w2x1, w2y1] = flipY(opSx - nxx * halfT * 0.3, opSy - nyy * halfT * 0.3)
+                          const [w2x2, w2y2] = flipY(opEx - nxx * halfT * 0.3, opEy - nyy * halfT * 0.3)
                           return (
                             <g key={oi}>
                               <line
-                                x1={opSx + nxx * halfT * 0.3} y1={opSy + nyy * halfT * 0.3}
-                                x2={opEx + nxx * halfT * 0.3} y2={opEy + nyy * halfT * 0.3}
+                                x1={w1x1} y1={w1y1}
+                                x2={w1x2} y2={w1y2}
                                 stroke="#d946ef" strokeWidth={2}
                               />
                               <line
-                                x1={opSx - nxx * halfT * 0.3} y1={opSy - nyy * halfT * 0.3}
-                                x2={opEx - nxx * halfT * 0.3} y2={opEy - nyy * halfT * 0.3}
+                                x1={w2x1} y1={w2y1}
+                                x2={w2x2} y2={w2y2}
                                 stroke="#d946ef" strokeWidth={2}
                               />
                             </g>
@@ -326,10 +343,10 @@ export function FloorPlan() {
                         }
                       })}
 
-                      {/* Dimension text */}
+                      {/* Dimension text (flip Y) */}
                       <text
-                        x={(start[0] + end[0]) / 2 + nx * 400}
-                        y={(start[1] + end[1]) / 2 + ny * 400}
+                        x={(() => { const [f] = flipY((start[0] + end[0]) / 2 + nx * 400, (start[1] + end[1]) / 2 + ny * 400); return f })()}
+                        y={(() => { const [, f] = flipY((start[0] + end[0]) / 2 + nx * 400, (start[1] + end[1]) / 2 + ny * 400); return f })()}
                         fill="#06b6d4"
                         fontSize={120}
                         textAnchor="middle"
