@@ -100,21 +100,55 @@ export function WallList({ walls, roomId, onRefresh }: WallListProps) {
     const wall2 = walls[swapIndex]
 
     try {
-      // Swap orderIndex values
-      await fetch(`/api/walls/${wall1.id}`, {
+      // Use a temporary high index to avoid unique constraint conflicts
+      // Step 1: set wall1 to a temporary index
+      const tempIndex = 9999
+      const res1 = await fetch(`/api/walls/${wall1.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderIndex: wall2.orderIndex }),
+        body: JSON.stringify({ orderIndex: tempIndex }),
       })
-      await fetch(`/api/walls/${wall2.id}`, {
+      if (!res1.ok) throw new Error('Failed to update first wall')
+
+      // Step 2: set wall2 to wall1's original index
+      const res2 = await fetch(`/api/walls/${wall2.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderIndex: wall1.orderIndex }),
       })
+      if (!res2.ok) throw new Error('Failed to update second wall')
+
+      // Step 3: set wall1 to wall2's original index
+      const res3 = await fetch(`/api/walls/${wall1.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderIndex: wall2.orderIndex }),
+      })
+      if (!res3.ok) throw new Error('Failed to finalize wall order')
+
+      // Step 4: update wallIndex on all openings that reference the swapped walls
+      // Openings on wall1 now have wallIndex = swapIndex
+      // Openings on wall2 now have wallIndex = wallIndex
+      for (const op of wall1.openings) {
+        await fetch(`/api/openings/${op.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ wallIndex: swapIndex }),
+        })
+      }
+      for (const op of wall2.openings) {
+        await fetch(`/api/openings/${op.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ wallIndex: wallIndex }),
+        })
+      }
+
       onRefresh()
       toast({ title: 'Ordine actualizata' })
     } catch (error) {
       console.error('Error reordering wall:', error)
+      toast({ title: 'Eroare', description: 'Nu s-a putut schimba ordinea', variant: 'destructive' })
     }
   }
 

@@ -249,7 +249,7 @@ export function generateBuildingDXF(building: {
 }): string {
   const dxf = new DXFWriter()
 
-  // Calculate room positions (left to right with spacing)
+  // Calculate room positions (left to right with spacing, considering both X and Y extent)
   const roomPositions: Point[] = []
   let currentX = 0.0
   const spacing = ROOM_SPACING_MM
@@ -259,7 +259,11 @@ export function generateBuildingDXF(building: {
     let width = 3000 // default 3m
     if (polygonM.length > 0) {
       const xs = polygonM.map(p => p[0])
-      width = Math.max((Math.max(...xs) - Math.min(...xs)) * M_TO_MM, 1000)
+      const ys = polygonM.map(p => p[1])
+      const extentX = (Math.max(...xs) - Math.min(...xs)) * M_TO_MM
+      const extentY = (Math.max(...ys) - Math.min(...ys)) * M_TO_MM
+      // Use the maximum extent so tall rooms don't overlap
+      width = Math.max(Math.max(extentX, extentY), 1000)
     }
     roomPositions.push([currentX, 0.0])
     currentX += width + spacing

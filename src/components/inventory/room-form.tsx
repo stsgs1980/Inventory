@@ -29,9 +29,10 @@ interface RoomFormProps {
     interiorHeight: number
   } | null
   nextRoomNumber?: number
+  existingRoomCount?: number
 }
 
-export function RoomForm({ open, onOpenChange, buildingId, onSubmit, editRoom, nextRoomNumber }: RoomFormProps) {
+export function RoomForm({ open, onOpenChange, buildingId, onSubmit, editRoom, nextRoomNumber, existingRoomCount = 0 }: RoomFormProps) {
   const { toast } = useToast()
   const [number, setNumber] = useState(editRoom?.number ?? nextRoomNumber ?? 1)
   const [name, setName] = useState(editRoom?.name ?? 'Antreu')
@@ -69,7 +70,7 @@ export function RoomForm({ open, onOpenChange, buildingId, onSubmit, editRoom, n
             name,
             purpose,
             interiorHeight,
-            orderIndex: 0,
+            orderIndex: existingRoomCount,
           }),
         })
       }

@@ -124,6 +124,7 @@ export function RoomList({ autoExpand = false }: { autoExpand?: boolean }) {
           onOpenChange={setRoomFormOpen}
           buildingId={currentBuildingId}
           nextRoomNumber={(building?.rooms.length ?? 0) + 1}
+          existingRoomCount={building?.rooms.length ?? 0}
           onSubmit={refresh}
         />
       )}

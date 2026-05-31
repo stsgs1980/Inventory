@@ -195,43 +195,48 @@ export function FloorPlan() {
   }
 
   // ---------- Canvas click handler ----------
-  function handleCanvasClick(e: React.PointerEvent) {
+  function handleCanvasClick(e: React.MouseEvent) {
     if (isPanning) return
     const svg = svgRef.current
     if (!svg) return
 
-    const rect = svg.getBoundingClientRect()
-    const svgX = e.clientX - rect.left
-    const svgY = e.clientY - rect.top
+    const worldM = screenToWorld(e.clientX, e.clientY)
+    if (!worldM) return
 
     if (mode === 'draw' && selectedRoomId) {
-      // Convert SVG coords to world meters
-      const worldM = svgToWorld(svgX, svgY, rect.width, rect.height)
       const sx = snapToGrid(worldM[0], GRID_STEP_M)
       const sy = snapToGrid(worldM[1], GRID_STEP_M)
       setDrawPoints(prev => [...prev, [sx, sy]])
     } else if (mode === 'opening') {
-      // Find closest wall
-      const worldM = svgToWorld(svgX, svgY, rect.width, rect.height)
       findAndOpenWall(worldM[0], worldM[1])
     } else {
-      // View mode: select room by click
-      const worldM = svgToWorld(svgX, svgY, rect.width, rect.height)
       findRoomByClick(worldM[0], worldM[1])
     }
   }
 
-  // Convert SVG screen coords to world meters
-  function svgToWorld(svgX: number, svgY: number, containerW: number, containerH: number): [number, number] {
-    if (!building || !building.rooms.length) return [0, 0]
+  // Convert screen pixel coordinates to world meters
+  // Accounts for zoom and pan transforms
+  function screenToWorld(clientX: number, clientY: number): [number, number] | null {
+    const svg = svgRef.current
+    if (!svg || !building) return null
+
+    const rect = svg.getBoundingClientRect()
     const { viewBox } = calculateViewBox()
-    // Convert svgX, svgY to viewBox coordinates
-    const vbX = viewBox.x + (svgX / containerW) * viewBox.w
-    const vbY = viewBox.y + (svgY / containerH) * viewBox.h
-    // Convert viewBox coords to world meters (inverse of mToSvg)
+
+    // Step 1: screen pixel -> viewBox coordinate
+    const vbX = viewBox.x + ((clientX - rect.left) / rect.width) * viewBox.w
+    const vbY = viewBox.y + ((clientY - rect.top) / rect.height) * viewBox.h
+
+    // Step 2: inverse the <g transform="scale(zoom) translate(pan.x/zoom, pan.y/zoom)">
+    // The transform applies: first translate, then scale.
+    // So to invert: first divide by zoom, then subtract pan offset.
+    const worldSvgX = (vbX / zoom) - (pan.x / zoom)
+    const worldSvgY = (vbY / zoom) - (pan.y / zoom)
+
+    // Step 3: viewBox SVG coordinate -> world meters (inverse of mToSvg)
     const origin = getOrigin()
-    const xM = (vbX - origin.x) / M_TO_MM
-    const yM = -(vbY - origin.y) / M_TO_MM
+    const xM = (worldSvgX - origin.x) / M_TO_MM
+    const yM = -(worldSvgY - origin.y) / M_TO_MM
     return [xM, yM]
   }
 
@@ -241,19 +246,35 @@ export function FloorPlan() {
 
   function findAndOpenWall(worldXM: number, worldYM: number) {
     if (!building) return
-    for (const room of building.rooms) {
+    // Search only in the selected room first, then fallback to all rooms
+    const roomOrder = selectedRoomId
+      ? [building.rooms.find(r => r.id === selectedRoomId), ...building.rooms.filter(r => r.id !== selectedRoomId)]
+      : building.rooms
+
+    let bestDist = Infinity
+    let bestWallId: string | null = null
+    let bestWallIndex = 0
+
+    for (const room of roomOrder) {
+      if (!room) continue
       const polygon = buildRoomPolygon(room.walls)
       for (let i = 0; i < room.walls.length; i++) {
         const start = polygon[i]
         const end = polygon[i + 1] || polygon[0]
         if (!start || !end) continue
-        const { dist, t } = pointToSegmentDistance(worldXM, worldYM, start[0], start[1], end[0], end[1])
-        if (dist < 0.5) { // Within 50cm
-          setOpeningFormWallId(room.walls[i].id)
-          setOpeningFormWallIndex(i)
-          return
+        const { dist } = pointToSegmentDistance(worldXM, worldYM, start[0], start[1], end[0], end[1])
+        if (dist < bestDist) {
+          bestDist = dist
+          bestWallId = room.walls[i].id
+          bestWallIndex = i
         }
       }
+    }
+
+    // Only open if within 1m of a wall
+    if (bestWallId && bestDist < 1.0) {
+      setOpeningFormWallId(bestWallId)
+      setOpeningFormWallIndex(bestWallIndex)
     }
   }
 
@@ -332,10 +353,8 @@ export function FloorPlan() {
     }
 
     if (mode === 'draw') {
-      const svg = svgRef.current
-      if (!svg) return
-      const rect = svg.getBoundingClientRect()
-      const worldM = svgToWorld(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height)
+      const worldM = screenToWorld(e.clientX, e.clientY)
+      if (!worldM) return
       setMouseWorldM([snapToGrid(worldM[0], GRID_STEP_M), snapToGrid(worldM[1], GRID_STEP_M)])
     }
   }
@@ -1004,9 +1023,9 @@ export function FloorPlan() {
   }
 }
 
-// Helper: check if polygon is closed
+// Helper: check if polygon is closed (5cm tolerance for floating-point accumulation)
 function isPolygonClosed(points: [number, number][]): boolean {
   if (points.length < 2) return false
   const last = points[points.length - 1]
-  return Math.abs(last[0]) < 0.01 && Math.abs(last[1]) < 0.01
+  return Math.abs(last[0]) < 0.05 && Math.abs(last[1]) < 0.05
 }
