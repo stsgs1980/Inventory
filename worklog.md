@@ -87,3 +87,60 @@ Stage Summary:
 - Form components converted to useReducer (opening-form, wall-form, room-form)
 - Barrel exports added for all component/hook/type directories
 - DXF export verified working after refactoring (9397 bytes, valid AC1021 format)
+
+---
+Task ID: 4
+Agent: Main Agent
+Task: PHASE 1 (Canvas Editor) + PHASE 2 (DXF Structure) - Major restructure for CAD-like drawing
+
+Work Log:
+- Analyzed current SVG-based floor plan limitations (compass-direction walls only, no true CAD drawing)
+- Updated Prisma schema: Wall model now has startX, startY, endX, endY (absolute world coordinates in meters)
+- Removed wallIndex from Opening model (offset is now along wall from start point)
+- Ran Prisma migration (db push) - schema synced
+- Updated TypeScript types: WallData now includes coordinate fields, added EditorTool, SnapPoint, ViewportState, EditorCommand types
+- Created Canvas CAD engine (src/lib/canvas/):
+  - geometry.ts (142 lines): dist, midpoint, wallAngle, wallDirection, perpendicularUnit, pointToSegmentDist, lineIntersection, polygonArea, polygonCenter, snapToGrid, perpendicularFoot
+  - snap.ts (125 lines): findSnapPoint (grid/endpoint/midpoint/intersection/perpendicular snap), findNearestWall
+  - renderer.ts (160 lines): drawGrid, drawWall, worldToPixel, pixelToWorld coordinate conversion
+  - renderer-rooms.ts (196 lines): drawDoor, drawWindow, drawRoom (with connected polygon builder)
+  - tools.ts (184 lines): processWallToolClick, updateWallPreview, processOpeningToolClick, processSelectToolClick
+  - api.ts (70 lines): createWallAPI, createOpeningAPI, deleteWallAPI
+  - index.ts: barrel exports
+- Created Canvas editor hooks (src/hooks/):
+  - use-canvas-editor.ts (164 lines): tool state, viewport, snap, mouse tracking, zoom/pan, API calls
+  - use-canvas-render.ts (95 lines): requestAnimationFrame render loop, tool previews, snap indicators, crosshair
+- Created Canvas UI components (src/components/canvas/):
+  - canvas-editor.tsx (122 lines): main editor with keyboard shortcuts (1/2/3 tools, Escape cancel, Delete)
+  - canvas-toolbar.tsx (118 lines): tool selector, wall type toggle, opening type toggle, zoom controls
+  - canvas-status-bar.tsx (42 lines): coordinates display, snap indicator, tool name, keyboard hints
+- Updated DXF generator (src/lib/dxf/):
+  - writer.ts (196 lines): Added addLineWithXDATA, addLWPolylineWithXDATA, buildXDATA (CSTINVENTORY format)
+  - dxf-tables.ts (162 lines): Extracted from writer, added CSTINVENTORY APPID registration
+  - entities.ts (186 lines): Updated for coordinate-based walls, XDATA on wall lines/room outlines/openings
+  - generator.ts (126 lines): New orchestrator using coordinate-based walls with room layout algorithm
+  - utils.ts (139 lines): Updated buildRoomPolygon for coordinates, added legacy compat
+  - index.ts: barrel exports
+- Updated API routes:
+  - /api/walls: Now accepts startX, startY, endX, endY
+  - /api/openings: Removed wallIndex, offset is from wall start
+  - /api/buildings/[id]/export: Uses coordinate-based data transform
+- Updated main page: Step 4 now uses CanvasEditor instead of FloorPlan
+- Updated room-card.tsx: isRoomClosed() uses coordinate-based check
+- Updated constants.ts: Added canvas editor constants (zoom, snap, grid, colors)
+- All files verified under 200 lines (anti-monolith compliance)
+- Build: successful (npx next build compiles with 0 errors)
+- End-to-end test: Building -> Room -> Coordinate Walls -> Openings -> DXF export (11179 bytes)
+- DXF verification: CSTINVENTORY XDATA present (6 entries), all layers correct (Portant, Despartitor, Incaperi, Gol, Dimensiuni, Nivel, Text)
+
+Stage Summary:
+- Canvas-based CAD editor replaces SVG floor plan (full drawing capability)
+- Walls use absolute world coordinates (startX,startY,endX,endY) instead of compass direction
+- Snap engine supports grid, endpoint, midpoint, intersection, perpendicular snap types
+- Tools: Select (click walls/rooms), Wall (click start/end to draw), Opening (click wall to add), Dimension
+- DXF generator produces CSTINVENTORY XDATA on all wall, room outline, and opening entities
+- CSTINVENTORY APPID registered in DXF TABLES section
+- Room polygon builder connects wall endpoints by chain-linking
+- Zoom toward cursor, pan with Shift+drag, keyboard shortcuts
+- All source files under 200 lines (0 anti-monolith violations)
+- Test DXF: /home/z/my-project/download/test_canvas_v4.dxf (11179 bytes, valid AC1021 + XDATA)

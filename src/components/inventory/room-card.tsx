@@ -9,7 +9,6 @@ import { WallList } from './wall-list'
 import { WallForm } from './wall-form'
 import { RoomForm } from './room-form'
 import { ChevronDown, ChevronUp, Plus, Trash2, Edit2 } from 'lucide-react'
-import { isPolygonClosed } from '@/lib/plan-utils'
 
 interface RoomCardProps {
   buildingId: string
@@ -27,9 +26,7 @@ export function RoomCard({ buildingId, room, onRefresh, onDelete, defaultExpande
   const area = calculateArea(room.walls)
   const wallCount = room.walls.length
   const openingCount = room.walls.reduce((sum, w) => sum + w.openings.length, 0)
-  const polygon = buildRoomPolygon(room.walls)
-  const lastPoint = polygon.length > 1 ? polygon[polygon.length - 1] : null
-  const isClosed = lastPoint !== null && Math.abs(lastPoint[0]) < 0.01 && Math.abs(lastPoint[1]) < 0.01
+  const isClosed = isRoomClosed(room.walls)
 
   return (
     <>
@@ -83,4 +80,14 @@ export function RoomCard({ buildingId, room, onRefresh, onDelete, defaultExpande
         buildingId={buildingId} editRoom={room} onSubmit={onRefresh} />
     </>
   )
+}
+
+/** Check if room walls form a closed polygon (end of last wall near start of first) */
+function isRoomClosed(walls: RoomData['walls']): boolean {
+  if (walls.length < 3) return false
+  const first = walls[0]
+  const last = walls[walls.length - 1]
+  const dx = last.endX - first.startX
+  const dy = last.endY - first.startY
+  return Math.sqrt(dx * dx + dy * dy) < 0.1
 }

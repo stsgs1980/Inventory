@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import { generateBuildingDXF } from '@/lib/dxf/entities'
+import { generateBuildingDXF } from '@/lib/dxf/generator'
 
 // GET /api/buildings/[id]/export - generate and download DXF file
 export async function GET(
@@ -28,7 +28,7 @@ export async function GET(
       return NextResponse.json({ error: 'Building not found' }, { status: 404 })
     }
 
-    // Transform data for DXF generator
+    // Transform data for coordinate-based DXF generator
     const buildingData = {
       letter: building.letter,
       permitNumber: building.permitNumber,
@@ -43,13 +43,19 @@ export async function GET(
         purpose: room.purpose,
         interiorHeight: room.interiorHeight,
         walls: room.walls.map(wall => ({
+          // Coordinate fields (meters) - primary
+          startX: wall.startX,
+          startY: wall.startY,
+          endX: wall.endX,
+          endY: wall.endY,
+          // Computed/legacy
           direction: wall.direction,
           length: wall.length,
+          // Properties
           thickness: wall.thickness,
           wallType: wall.wallType,
           openings: wall.openings.map(opening => ({
             openingType: opening.openingType,
-            wallIndex: opening.wallIndex,
             offset: opening.offset,
             width: opening.width,
             height: opening.height,

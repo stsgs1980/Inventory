@@ -36,10 +36,19 @@ model Room {
   walls          Wall[]
 }
 
+// Wall stores absolute coordinates (meters) for CAD-like drawing.
+// direction/length are computed from coordinates for backward compatibility.
 model Wall {
   id         String   @id @default(cuid())
-  direction  String   @default("N")
+  // Absolute world coordinates (meters) - primary data for Canvas editor
+  startX     Float    @default(0)
+  startY     Float    @default(0)
+  endX       Float    @default(0)
+  endY       Float    @default(0)
+  // Computed/legacy fields - derived from coordinates
+  direction  String   @default("E")
   length     Float    @default(0)
+  // Wall properties
   thickness  Float    @default(400)
   wallType   String   @default("portant")
   orderIndex Int      @default(0)
@@ -53,7 +62,7 @@ model Wall {
 model Opening {
   id          String   @id @default(cuid())
   openingType String   @default("door")
-  wallIndex   Int      @default(0)
+  // offset measured along the wall from start point (meters)
   offset      Float    @default(0)
   width       Float    @default(0.9)
   height      Float    @default(2.1)

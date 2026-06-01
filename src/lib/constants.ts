@@ -35,18 +35,6 @@ export const TEXT_HEIGHT = 250.0
 export const DIM_TEXT_HEIGHT = 180.0
 export const DIM_OFFSET = 800.0
 
-// Direction vectors for compass directions (normalized)
-export const DIR_VECTORS: Record<string, [number, number]> = {
-  N: [0.0, 1.0],
-  S: [0.0, -1.0],
-  E: [1.0, 0.0],
-  W: [-1.0, 0.0],
-  NE: [0.7071, 0.7071],
-  NW: [-0.7071, 0.7071],
-  SE: [0.7071, -0.7071],
-  SW: [-0.7071, -0.7071],
-}
-
 // Layer definitions for DXF
 export const LAYER_DEFS: [string, number][] = [
   [LAYER_PORTANT, COLOR_PORTANT],
@@ -66,24 +54,12 @@ export const WALL_TYPES = ['portant', 'despartitor'] as const
 export const OPENING_TYPES = ['window', 'door'] as const
 export const ROOM_PURPOSES = ['Locuibila', 'Auxiliara'] as const
 export const FLOOR_TYPES = ['Parter', 'Etaj 1', 'Etaj 2', 'Etaj 3', 'Mansarda', 'Subsol'] as const
-export const WALL_DIRECTIONS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const
 
 // Room names (Romanian)
 export const ROOM_NAMES = [
-  'Antreu',
-  'Cazangerie',
-  'Bucatarie',
-  'Sufragerie',
-  'Terasa',
-  'Coridor',
-  'Garderoba',
-  'Dormitor',
-  'Grup sanitar',
-  'Cabinet',
-  'Balcon',
-  'Depozit',
-  'Camera tehnica',
-  'Alta incapere',
+  'Antreu', 'Cazangerie', 'Bucatarie', 'Sufragerie', 'Terasa',
+  'Coridor', 'Garderoba', 'Dormitor', 'Grup sanitar', 'Cabinet',
+  'Balcon', 'Depozit', 'Camera tehnica', 'Alta incapere',
 ] as const
 
 // Default wall thickness by type (mm)
@@ -93,12 +69,52 @@ export const DEFAULT_THICKNESS_DESPARTITOR = 130
 // Room spacing in DXF (mm)
 export const ROOM_SPACING_MM = 500
 
-// Compass direction labels for the 3x3 grid
+// Canvas editor constants (all in meters unless noted)
+export const GRID_MINOR_M = 0.1       // 10cm minor grid
+export const GRID_MAJOR_M = 1.0       // 1m major grid
+export const SNAP_THRESHOLD_PX = 12   // Pixel distance for snap detection
+export const WALL_SELECT_THRESHOLD_M = 0.3  // How close to click a wall
+export const MIN_WALL_LENGTH_M = 0.05 // Minimum wall length
+export const DEFAULT_ZOOM = 4.0       // Default zoom (pixels per mm at 1x)
+export const MIN_ZOOM = 0.3
+export const MAX_ZOOM = 20.0
+export const ZOOM_FACTOR = 1.15       // Mouse wheel zoom multiplier
+
+// Canvas rendering colors
+export const CANVAS_COLORS = {
+  gridMinor: '#f0f0f0',
+  gridMajor: '#d4d4d8',
+  gridOrigin: '#94a3b8',
+  wallPortant: '#ef4444',
+  wallDespartitor: '#22c55e',
+  wallPreview: '#f97316',
+  roomFill: '#f0fdf4',
+  roomStroke: '#059669',
+  roomSelected: '#dcfce7',
+  openingDoor: '#d946ef',
+  openingWindow: '#d946ef',
+  dimensionLine: '#0891b2',
+  dimensionText: '#0e7490',
+  snapPoint: '#059669',
+  snapIndicator: '#fbbf24',
+  selectionBox: '#3b82f6',
+  crosshair: '#6b7280',
+} as const
+
+// Step labels (Romanian)
+export const STEP_LABELS = ['Cladire', 'Incaperi', 'Pereti', 'Plan', 'Export'] as const
+
+// Compass direction labels for the 3x3 grid (legacy)
 export const COMPASS_GRID = [
   ['NW', 'N', 'NE'],
   ['W', '', 'E'],
   ['SW', 'S', 'SE'],
 ] as const
 
-// Step labels (Romanian)
-export const STEP_LABELS = ['Cladire', 'Incaperi', 'Pereti', 'Plan', 'Export'] as const
+// Direction vectors (legacy, for backward compat)
+export const DIR_VECTORS: Record<string, [number, number]> = {
+  N: [0.0, 1.0], S: [0.0, -1.0],
+  E: [1.0, 0.0], W: [-1.0, 0.0],
+  NE: [0.7071, 0.7071], NW: [-0.7071, 0.7071],
+  SE: [0.7071, -0.7071], SW: [-0.7071, -0.7071],
+}
