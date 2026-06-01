@@ -144,3 +144,23 @@ Stage Summary:
 - Zoom toward cursor, pan with Shift+drag, keyboard shortcuts
 - All source files under 200 lines (0 anti-monolith violations)
 - Test DXF: /home/z/my-project/download/test_canvas_v4.dxf (11179 bytes, valid AC1021 + XDATA)
+
+---
+Task ID: 5
+Agent: Main Agent
+Task: Production build, push to GitHub, create README.md with sources
+
+Work Log:
+- Ran `npm run build` -- successful (Next.js 16.1.3 Turbopack, 5.7s compile, 8/8 pages)
+- Started production server via `node .next/standalone/server.js` on port 3000 (HTTP 200)
+- Added remote origin: https://github.com/stsgs1980/Inventory.git
+- Pushed main branch to GitHub (successful with PAT token)
+- Removed PAT token from remote URL for security
+- Created comprehensive README.md with: project description, architecture, DXF format details, Canvas editor tools, workflow, tech stack, CST sources/references, development requirements, run instructions, project status
+- Updated worklog with Task 5
+
+Stage Summary:
+- Production build verified: 8 static + dynamic routes, 0 errors
+- Code pushed to https://github.com/stsgs1980/Inventory (main branch)
+- README.md created with full project documentation and CST source references
+- All 16 CST scraped data files documented in README sources section
