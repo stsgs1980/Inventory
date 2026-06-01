@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "### 1) Title/Header  \nThe document is titled **\"RAPORTUL LUCRĂRII Cadastrale la nivel de clădiri\"** (Cadastral Work Report at the Building Level). The header includes the issuing company: **\"Societatea cu Răspundere Limitată „LANDELCAD”\"** (Limited Liability Company \"LANDELCAD\").  \n\n\n### 2) Tables and Data Shown  \nNo traditional tables (e.g., data grids) are present. The document contains structured text fields with key information:  \n- **Cadastral Number**: *Nr. cadastral: 3156101.198*  \n- **Report Number**: *Nr. LC-2026-004*  \n- **Address**: *Adresa: mun. Chisinau, or. Cricova, str. Vasile Alecsandri nr.19/A*  \n- **Owner**: *proprietar: CRAVCESCO ALEXANDRU (1,0 c.p.)* (owner: CRAVCESCO ALEXANDRU, 1.0 ownership share)  \n- **Digital Signature Details**:  \n  - Signer: *Digitally signed by Luchianenco Natalia*  \n  - Date: *2026.04.02 21:48:55 EEST*  \n  - Reason: *MoldSign Signature*  \n  - Location: *Moldova*  \n  - Affiliation: *MOLDOVA EUROPEANĂ*  \n\n\n### 3) Rooms, Areas, Measurements  \nNo rooms, areas, or measurements are listed. The document focuses on administrative/cadastral details (address, owner, report number) rather than physical property measurements.  \n\n\n### 4) Stamps, Signatures, Official Elements  \n- **Company Stamp**: A blue circular stamp with text: *REPUBLICA MOLDOVA, mun. CHISINAU, S.R.L. LANDELCAD, INREGISTRATĂ* (Republic of Moldova, Chisinau municipality, S.R.L. LANDELCAD, Registered).  \n- **Signatures**:  \n  - *Conducător/Verificator* (Manager/Verifier): *Luchianenco Natalia* (with signature).  \n  - *Executantul lucrărilor* (Work Executor): *Luchianenco Natalia* (with signature).  \n- **Official Emblem**: A coat of arms (likely of the Republic of Moldova) is displayed in the top-right corner.  \n\n\n### 5) Document Format  \nThe document is a **formal cadastral report** with a structured layout:  \n- Header (company name, digital signature details).  \n- Title and report number.  \n- Address, owner, and cadastral number.  \n- Signature/verification sections (with stamp).  \n- Year (2026) at the bottom.  \n\nAll text is in Romanian, with a clean, official design typical of cadastral documentation.  \n\n\n### Full Readable Text  \n```\nSocietatea cu Răspundere Limitată „LANDELCAD”  \nDigitally signed by Luchianenco Natalia  \nDate: 2026.04.02 21:48:55 EEST  \nReason: MoldSign Signature  \nLocation: Moldova  \nMOLDOVA EUROPEANĂ  \n\nNr. cadastral: 3156101.198  \n\nRAPORTUL LUCRĂRII Cadastrale  \nla nivel de clădiri  \nNr. LC-2026-004  \n\nAdresa: mun. Chisinau, or. Cricova, str. Vasile Alecsandri nr.19/A  \n\nproprietar: CRAVCESCO ALEXANDRU (1,0 c.p.)  \n\n[Blue stamp: REPUBLICA MOLDOVA, mun. CHISINAU, S.R.L. LANDELCAD, INREGISTRATĂ]  \n\nConducător/Verificator  \nLuchianenco Natalia  \n(L.S., semnătura, numele, prenumele)  \n\nExecutantul lucrărilor  \nLuchianenco Natalia  \n(semnătura, numele, prenumele)  \n\n2026  \n```",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1780311985,
+  "id": "20260601190600b0f697f9d2584322",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "20260601190600b0f697f9d2584322",
+  "usage": {
+    "completion_tokens": 897,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 2853,
+    "prompt_tokens_details": {
+      "cached_tokens": 4
+    },
+    "total_tokens": 3750
+  }
+}

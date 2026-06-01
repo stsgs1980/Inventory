@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "# Description of the Romanian Cadastral/Architectural Document (Page 2)  \n\n## Header & Identification  \n- **Title**: *PLANUL GEOMETRIC* (Geometric Plan)  \n- **Cadastral Number**: *Numărul cadastral* = **3156101.198**  \n\n\n## Geometric Plan (Left Section)  \n- A polygonal plot with vertices labeled **1, 2, 3, 4, 5, 6, 7, 8** (clockwise).  \n- A smaller, irregularly shaped structure (labeled **.04**) is centered within the plot.  \n\n\n## Location Map (Right Section)  \n- Title: *Amplasamentul bunului* (Location of the Property).  \n- A small-scale map showing the plot’s position relative to neighboring properties (labeled **15, 4, 17, 17/A, 19/A, 21, 23, 25, 25/A**) and the street *str. Vasile Alecsandri*.  \n- Legend:  \n  - *198 - numărul cadastral al terenului* (198 = cadastral number of the land)  \n  - *01 - numărul cadastral al clădirii* (01 = cadastral number of the building)  \n\n\n## Technical Characteristics Table (*Caracteristicile tehnice ale bunului imobil*)  \n| Nr          | Tipul bunu       | Destinația                                  | Mod de folosinta                          | Suprafata   | Mențiuni |  \n|-------------|-----------------|--------------------------------------------|------------------------------------------|------------|----------|  \n| 3156101.198  | Teren           | Terenuri destinate construcțiilor și amenajărilor | Teren pentru amplasarea construcțiilor locative | 0.0861 ha   | –        |  \n| 3156101.198.04 | constructie    | Casa de locuit individuală                  | –                                        | 203.2 m.p.  | –        |  \n\n\n## Company & Certification Section  \n- **Company Name**: *Societatea cu răspundere limitată \"LANDELCAD\"* (Limited Liability Company \"LANDELCAD\").  \n- **Activity**: *Lucrare cadastrală la nivel de clădire* (Cadastral work at building level).  \n- **Address**: *mun. Chisinau, or. Cricova, str. Vasile Alecsandri nr. 19/A* (Municipality of Chisinau, City of Cricova, Vasile Alecsandri Street No. 19/A).  \n\n### Signatures & Stamps  \n- **Blue Stamp**: Circular, with text *REPUBLICA MOLDOVA, mun. CHISINAU, S.R.L. LANDELCAD* (Republic of Moldova, City of Chisinau, S.R.L. LANDELCAD).  \n- **Conducător / Executant** (Leader/Executor): Signature + printed name *Luchianenco N.*.  \n- **Verificat** (Verified): Signature + printed name *Luchianenco N.*.  \n\n### Additional Details  \n- **Data întocmirii** (Date of Preparation): *02.03.2026* (02 March 2026) – with note *data inspectării în teren* (field inspection date).  \n- **Sistem de coordonate** (Coordinate System): *MoldRef99*.  \n- **Scara** (Scale): *1:400*.  \n\n\n## Footer  \n- *Parametrii hotarului vezi verso* (Boundary parameters see reverse).  \n- *Pagina 1 din 2* (Page 1 of 2).  \n\n\nAll text is in Romanian; measurements use metric units (hectares for land, square meters for building area). The document is a formal cadastral record for a residential plot and building in Moldova.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1780312009,
+  "id": "20260601190627e15e16ff01894ebc",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "20260601190627e15e16ff01894ebc",
+  "usage": {
+    "completion_tokens": 849,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 2822,
+    "prompt_tokens_details": {
+      "cached_tokens": 4
+    },
+    "total_tokens": 3671
+  }
+}

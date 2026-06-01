@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "This is page 2 of 2 of a Romanian cadastral document (page 3 as referenced in the query appears to be a mislabeling). The document contains the following content:\n\n**Header Information:**\n- Cadastral Number: \"Numărul cadastral: 3156101.198\"\n- Title: \"Parametrii hotarului\" (Boundary Parameters)\n\n**Table of Boundary Points:**\nThe table contains 8 boundary points with the following columns:\n- \"Punct\" (Point): Numbers 1-8\n- \"x\": X-coordinate values (235 followed by varying numbers)\n- \"y\": Y-coordinate values (222 followed by varying numbers)\n- \"Tipul_punct\" (Point Type): All listed as \"general\"\n- \"Hotar\" (Boundary): Sequential pairs (1-2, 2-3, 3-4, 4-5, 5-6, 6-7, 7-8, 8-1)\n- \"Distanța\" (Distance): Measurements in meters (6.47, 6.29, 12.28, 17.27, 10.57, 9.53, 21.56, 31.55)\n- \"Tipul_hotar\" (Boundary Type): All listed as \"general\"\n\n**Specific Point Data:**\n1. Point 1: x=235 555,5040, y=222 184,7678, Distance 1-2: 6.47m\n2. Point 2: x=235 551,3730, y=222 179,7850, Distance 2-3: 6.29m\n3. Point 3: x=235 546,1812, y=222 176,2356, Distance 3-4: 12.28m\n4. Point 4: x=235 535,7058, y=222 169,8298, Distance 4-5: 17.27m\n5. Point 5: x=235 524,8790, y=222 183,2900, Distance 5-6: 10.57m\n6. Point 6: x=235 517,4988, y=222 190,8622, Distance 6-7: 9.53m\n7. Point 7: x=235 522,6260, y=222 198,9000, Distance 7-8: 21.56m\n8. Point 8: x=235 539,6992, y=222 212,0680, Distance 8-1: 31.55m\n\n**Additional Section:**\n- \"Mențiuni:\" (Notes/Remarks): Contains three blank horizontal lines for additional notes\n\n**Footer:**\n- \"Pagina 2 din 2\" (Page 2 of 2)\n\nThe document appears to be a cadastral survey showing the coordinates and distances of boundary points for a property, but does not contain any floor plans, room numbers, or area measurements. It focuses solely on the external boundary parameters of the property.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1780311986,
+  "id": "20260601190615554b1d2dd06b4142",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "20260601190615554b1d2dd06b4142",
+  "usage": {
+    "completion_tokens": 687,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 2814,
+    "prompt_tokens_details": {
+      "cached_tokens": 4
+    },
+    "total_tokens": 3501
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "content": "This is a Romanian cadastral document titled \"PLANUL REPREZENTĂRII PĂRȚILOR COMPONENTE ALE CLĂDIRILOR\" (Plan of Representation of Building Components) from \"Societatea cu Răspundere Limitată 'LANDELCAD'\" (Limited Liability Company \"LANDELCAD\"). The document is an annex to a geometric plan (\"Anexă la Planul geometric\") with the following detailed content:\n\n\n### **Header Information**\n- **Company Name**: \"Societatea cu Răspundere Limitată 'LANDELCAD'\" (top center).  \n- **Document Title**: \"PLANUL REPREZENTĂRII PĂRȚILOR COMPONENTE ALE CLĂDIRILOR\" (center, bold).  \n- **Cadastral Number**: \"Numărul cadastral al terenului\" = 3156101.198 (below title).  \n- **Address**: \"Adresa bunului imobil\" = \"mun. Chisinau, or. Cricova, str. Vasile Alecsandri nr. 19/A\" (below cadastral number).  \n- **Compass Rose**: Top right, indicating north (N), south (S), east (E), west (W).  \n- **Scale**: \"Scara tiparului\" = 1:300 (bottom right, below the floor plan).  \n\n\n### **Floor Plan Layout**\nThe floor plan is enclosed within a **dashed boundary line** (representing the property lot) and shows two connected building components:  \n1. **Main Building (04/B)**: A large, irregularly shaped polygon (black solid lines) forming the primary structure.  \n2. **Terasa (04/b)**: A smaller, rectangular extension (black solid lines) attached to the main building, labeled \"04/b\".  \n\nThe main building (04/B) and terrace (04/b) are connected by a shared wall, with the terrace projecting outward from the main structure. The dashed lot boundary encloses both components, indicating they are part of the same property.\n\n\n### **Room/Component Labels**\n- **04/B**: Labeled inside the main building (center of the larger polygon).  \n- **04/b**: Labeled inside the terrace (center of the smaller rectangle).  \n\n\n### **Tables (Below Floor Plan)**\nTwo tables provide cadastral and area data:  \n\n#### **1. \"Caracteristicile\" (Characteristics) Table**  \nColumns: *NrCadastral* (Cadastral Number), *Liter* (Letter), *Constructia* (Construction), *Componentul* (Component), *Supr_mp* (Surface in m²).  \nRows:  \n- **3156101.198.04 | B | Constr.principala | Partea principala | 172,2**: Main building (primary part) with area 172.2 m².  \n- **3156101.198.04 | b | Constr.principala | Terasa | 31**: Terrace (secondary part) with area 31 m².  \n\n#### **2. \"Suprafata la sol(m.p.)\" (Ground Floor Area) Table**  \nColumns: *NrCadastral*, *Suprafata* (Area).  \nRow:  \n- **3156101.198.04 | 203,2**: Total ground floor area (sum of main building and terrace: 172.2 + 31 = 203.2 m²).  \n\n\n### **Additional Elements**\n- **\"Mențiuni\" (Notes)**: A section below the tables (left-aligned, empty, indicating no additional notes).  \n- **Stamp**: A blue circular stamp (center-bottom) with text:  \n  - Top: \"REPUBLICA MOLDOVA\" (Republic of Moldova).  \n  - Middle: \"S.R.L. LANDELCAD\" (company name) and \"IDNO 102660001257\" (registration number).  \n  - Bottom: \"CHISINAU\" (city) and \"CU RĂSPUNDERE LIMITATĂ\" (Limited Liability).  \n- **Signatures/Fields**:  \n  - \"Data întocmirii planului\" (Plan Creation Date): \"02.03.2026\" (filled).  \n  - \"Conducătorul întreprinderii/Executantul lucrărilor\" (Company Director/Work Executor): Blank (with a signature, likely \"Luchianenco N.\").  \n  - \"Verificat\" (Verified): \"Luchianenco N.\" (filled, with a signature).  \n\n\n### **Key Details**\n- **No Internal Walls/Doors/Windows**: The floor plan shows only the external outlines of the main building and terrace; no internal partitions, doors, or windows are depicted.  \n- **Dimensions**: No dimension lines or numerical dimensions are visible (the scale 1:300 is provided, but no linear measurements are marked on the plan).  \n- **Text Labels**: Only component labels (\"04/B\", \"04/b\") and table headers are present; no room-specific labels (e.g., \"living room\", \"kitchen\") are included.  \n\n\nThis document is a cadastral representation of a building’s components, focusing on lot boundaries, component identification, and area calculations, typical of Romanian property registration documents.",
+        "role": "assistant"
+      }
+    }
+  ],
+  "created": 1780312057,
+  "id": "202606011907178caf8931233f45ce",
+  "model": "glm-4.6v",
+  "object": "chat.completion",
+  "request_id": "202606011907178caf8931233f45ce",
+  "usage": {
+    "completion_tokens": 1134,
+    "completion_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "prompt_tokens": 2841,
+    "prompt_tokens_details": {
+      "cached_tokens": 7
+    },
+    "total_tokens": 3975
+  }
+}
