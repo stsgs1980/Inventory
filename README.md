@@ -2,6 +2,37 @@
 
 Web-приложение для полевых архитектурных обмеров зданий с генерацией DXF-файлов, совместимых с CADSoftTools Inventory.
 
+
+[![Next.js](https://img.shields.io/badge/Next.js-black?style=flat-square)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-61DAFB?style=flat-square)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square)](https://www.typescriptlang.org)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square)](https://python.org)
+[![Tailwind_CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square)](https://tailwindcss.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+
+
+## Table of Contents
+
+- [Назначение](#назначение)
+- [Архитектура](#архитектура)
+- [DXF-формат (ФАЗА 2)](#dxf-формат-фаза-2)
+- [Инструменты Canvas-редактора (ФАЗА 1)](#инструменты-canvas-редактора-фаза-1)
+- [Рабочий процесс](#рабочий-процесс)
+- [Технологии](#технологии)
+- [Ссылки и источники](#ссылки-и-источники)
+- [Требования к разработке](#требования-к-разработке)
+- [Запуск](#запуск)
+- [Установка зависимостей](#установка-зависимостей)
+- [Миграция базы данных](#миграция-базы-данных)
+- [Development](#development)
+- [Production build](#production-build)
+- [Python bot (отдельно)](#python-bot-отдельно)
+- [Статус проекта](#статус-проекта)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [License](#license)
+
 ## Назначение
 
 Система предназначена для работы архитектора/инженера непосредственно на объекте (с планшета) -- выполнение обмеров, создание поэтажного плана с нуля (рисование стен, проемов, комнат), автоматический расчет площадей и экспорт в DXF-формат для загрузки в CADSoftTools Inventory на рабочем месте.
@@ -12,7 +43,7 @@ Web-приложение для полевых архитектурных обм
 
 ### Frontend (Next.js 16 + TypeScript + Tailwind CSS)
 
-```
+```bash
 src/
   app/                         # Next.js App Router
     api/                       # REST API маршруты
@@ -64,7 +95,7 @@ src/
 
 ### Backend (Python/FastAPI -- Telegram Bot)
 
-```
+```bash
 inventory-bot/
   services/dxf/
     generator.py               # Генерация DXF через ezdxf
@@ -207,20 +238,20 @@ inventory-bot/
 ## Запуск
 
 ```bash
-# Установка зависимостей
-npm install
+## Установка зависимостей
+bun install
 
-# Миграция базы данных
+## Миграция базы данных
 npx prisma db push
 
-# Development
-npm run dev
+## Development
+bun run dev
 
-# Production build
-npm run build
+## Production build
+bun run build
 node .next/standalone/server.js
 
-# Python bot (отдельно)
+## Python bot (отдельно)
 cd inventory-bot
 pip install -r requirements.txt
 python main.py
@@ -235,3 +266,47 @@ python main.py
 | ФАЗА 3: Шаблоны ввода | Планируется | Структурированные шаблоны для полевых обмеров |
 | ФАЗА 4: Шаблоны экспорта | Планируется | Стандартные шаблоны экспорта для Inventory |
 | ФАЗА 5: Шаблоны печати | Планируется | Печать документации в полевых условиях |
+
+
+## Features
+
+- Feature 1 - description
+- Feature 2 - description
+
+
+## Tech Stack
+
+- **Framework** - Next.js, FastAPI
+- **Language** - TypeScript, Python
+- **Styling** - Tailwind CSS, Canvas API, SVG, CSS
+- **Database** - Prisma, SQLite
+- **Libraries** - shadcn/ui
+- **Tools** - React, Node.js
+
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20+ or Bun
+
+### Installation
+
+```bash
+git clone https://github.com/stsgs1980/Inventory.git
+cd Inventory
+bun install
+```
+
+### Run
+
+```bash
+bun run dev
+```
+
+## License
+
+[MIT](LICENSE)
+
+---
+Built with: Next.js + React + TypeScript + Python
