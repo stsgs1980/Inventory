@@ -55,3 +55,6 @@ server.log
 # local sqlite (was leaking tracked db)
 *.db
 *.db-journal
+upload/
+download/
+tool-results/
